@@ -48,11 +48,22 @@ services:
     volumes:
       - ${APPDATA}/qbittorrent:/config
       - ${DATA_ROOT}:/data
+    healthcheck:
+      test: curl -f http://localhost:8080 || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     restart: unless-stopped
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
+    depends_on:
+      gluetun:
+        condition: service_healthy
+      qbittorrent:
+        condition: service_healthy
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -68,6 +79,11 @@ services:
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
+    depends_on:
+      gluetun:
+        condition: service_healthy
+      qbittorrent:
+        condition: service_healthy
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -83,10 +99,9 @@ services:
   recyclarr:
     image: ghcr.io/recyclarr/recyclarr:latest
     container_name: recyclarr
+    user: ${PUID}:${PGID}
     environment:
-      PUID: ${PUID}
       TZ: ${TZ}
-      UMASK: "022"
     volumes:
       - ${APPDATA}/recyclarr:/config
     restart: unless-stopped
@@ -124,11 +139,8 @@ services:
     init: true
     container_name: seerr
     environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
       LOG_LEVEL: info 
       TZ: ${TZ}
-      UMASK: "022"
     ports:
       - 5055:5055
     volumes:
