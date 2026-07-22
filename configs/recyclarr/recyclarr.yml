@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://schemas.recyclarr.dev/v8/config-schema.json
+
+################################################################################
+## SONARR
+################################################################################
+
+sonarr:
+  main:
+    base_url: http://sonarr:8989  # May need host IP
+    api_key: !secret sonarr_apikey
+
+    quality_definition:
+      type: series
+
+    quality_profiles:
+      - trash_id: 86b36e3e57147f1d1b37b6c59d747d25  # WEB-2160p
+        reset_unmatched_scores:
+          enabled: true
+      - trash_id: 72dae194fc92bf828f32cde7744e51a1  # WEB-1080p
+        reset_unmatched_scores:
+          enabled: true
+
+################################################################################
+## RADARR
+################################################################################
+
+radarr:
+  # First instance/profile configuration block
+  uhd-bluray-web:
+    base_url: http://radarr:7878  # May need host IP 
+    api_key: !secret radarr_apikey
+
+    quality_definition:
+      type: movie
+
+    quality_profiles:
+      - trash_id: 64fb5f9858489bdac2af690e27c8f42f  # UHD Bluray + WEB
+        reset_unmatched_scores:
+          enabled: true
+
+    custom_format_groups:
+      add:
+        - trash_id: 1616617ab3a14397a2b2321bcbda44d1  # [HDR Formats] DV Boost
+        - trash_id: 7fc2751eef7e6bdc70b74136e5e35c76  # [HDR Formats] DV (w/o HDR fallback)
+        - trash_id: f4f1474b963b24cf983455743aa9906c  # [Optional] Movie Versions
+          select:
+            - eca37840c13c6ef2dd0262b141a5482f  # 4K Remaster
+            - eecf3a857724171f968a66cb5719e152  # IMAX
+            - 9f6cbff8cfe4ebbc1bde14c7b7bec0de  # IMAX Enhanced
+            - 0f12c086e289cf966fa5948eac571f44  # Hybrid
+            - 570bc9ebecd92723d2d21500f4be314c  # Remaster
+
+  # Second instance/profile configuration block mapping to the same base URL
+  hd-bluray-web:
+    base_url: http://192.168.0.200:7878
+    api_key: !secret radarr_apikey
+
+    quality_definition:
+      type: movie
+
+    quality_profiles:
+      - trash_id: d1d67249d3890e49bc12e275d989a7e9  # HD Bluray + WEB
+        reset_unmatched_scores:
+          enabled: true
+

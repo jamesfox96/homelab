@@ -1,0 +1,8 @@
+*.env
+.env
+*secrets*
+*passwords*
+*api_key*
+
+!.env.example
+!secrets_example.yml
