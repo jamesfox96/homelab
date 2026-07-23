@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
+# Replace with your gluetun and qbittorrent container names.
 GLUETUN_CONTAINER="gluetun"
-QBIT_CONTAINER="qbittorrent" # Change to your actual qbittorrent container name
+QBIT_CONTAINER="qbittorrent" 
 
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
