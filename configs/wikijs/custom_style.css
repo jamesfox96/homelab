@@ -1,0 +1,539 @@
+/* Very messy but I cba to fix  */
+
+:root {
+  --site-white: hsl(0, 0%, 100%);
+  --site-text: hsl(0, 0%, 86%);
+  --site-surface: hsl(206, 72%, 11%);
+  --site-orange-500: hsl(10, 100%, 50%);
+  --site-orange-400: hsl(10, 100%, 58%);
+  --site-orange-300: hsl(10, 100%, 70%);
+  --site-orange-200: hsl(10, 100%, 80%);
+  --site-navy-700: hsl(206, 85%, 5%);
+  --site-navy-400: hsl(206, 72%, 11%);
+  --site-navy-300: hsl(206, 50%, 20%);
+  --site-navy-100: hsl(206, 30%, 28%);
+  --sidebar-bg: var(--site-navy-700);
+  --sidebar-button: var(--site-navy-400)
+}
+#app,
+#root,
+.application,
+.application--wrap,
+.v-application,
+body {
+  background-color: var(--site-navy-100)!important;
+  color: var(--site-text)!important
+}
+#root .v-application .overline {
+    line-height: 1rem;
+    font-size: .625rem!important;
+    color: var(--site-orange-300 )!important;
+    font-weight: 400;
+    letter-spacing: .1666666667em!important;
+}
+.theme--dark.v-app-bar,
+.theme--dark.v-toolbar,
+.v-app-bar,
+.v-sheet.v-app-bar,
+.v-sheet.v-toolbar,
+.v-toolbar,
+header.v-toolbar {
+  background-color: var(--site-navy-700)!important;
+  color: var(--site-white)!important;
+  border: none!important;
+  border-bottom: none!important;
+  box-shadow: none!important;
+  outline: 0!important
+}
+.v-toolbar .v-btn__content,
+.v-toolbar .v-icon,
+.v-toolbar .v-toolbar__title {
+  color: var(--site-white)!important
+}
+.v-toolbar .v-text-field .v-input__slot {
+  background-color: var(--site-navy-300)!important;
+  border: 1px solid var(--site-navy-100)!important;
+  box-shadow: none!important
+}
+.theme--dark.v-navigation-drawer,
+.v-navigation-drawer {
+  background-color: var(--site-navy-300)!important;
+  border: none!important;
+  box-shadow: none!important
+}
+.v-navigation-drawer__border {
+  display: none!important
+}
+.v-navigation-drawer .v-list-item,
+.v-navigation-drawer .v-list-item__subtitle,
+.v-navigation-drawer .v-list-item__title {
+  color: var(--site-text)!important
+}
+.v-navigation-drawer .caption,
+.v-navigation-drawer .overline,
+.v-navigation-drawer .v-list-group__header .v-list-item__title {
+  color: var(--site-text)!important;
+  text-transform: uppercase;
+  letter-spacing: .05em
+}
+.v-navigation-drawer .v-list-item:hover {
+  background-color: var(--site-navy-400)!important
+}
+.v-navigation-drawer .v-list-item--active .v-list-item__title {
+  color: var(--site-wite)!important
+}
+.v-navigation-drawer .v-icon {
+  color: var(--site-orange-400)!important
+}
+.v-navigation-drawer .v-btn {
+  background-color: var(--site-navy-400)!important;
+  color: var(--site-white)!important
+}
+.v-application .theme--dark.v-btn.blue.darken-2,
+.v-application .v-btn.blue.darken-2 {
+  background-color: var(--sidebar-button)!important;
+  border-color: var(--sidebar-button)!important;
+  box-shadow: none!important
+}
+.container,
+.contents,
+.v-main,
+.v-main__wrap {
+  background-color: var(--site-navy-100)!important;
+  color: var(--site-text)!important
+}
+.v-main .contents h1::after {
+    background: linear-gradient(90deg,var(--site-orange-400),rgba(25,118,210,0)) !important;
+}
+.page-col-content .headline,
+.page-col-content .subtitle-1,
+.v-application .grey--text {
+  color: var(--site-text)!important
+}
+.v-toolbar--dense .v-toolbar__content,
+.v-toolbar--dense .v-toolbar__extension {
+  padding-top: 0;
+  padding-bottom: 0;
+  background-color: var(--site-navy-400)
+}
+.v-application .grey.lighten-4 {
+  background-color: var(--site-navy-300)!important
+}
+.v-application .grey--text.text--darken-3 {
+    color: var(--site-orange-400)!important;
+    caret-color: var(--site-orange-400)!important;
+    font-weight: bold;
+}
+.theme--light.v-breadcrumbs .v-breadcrumbs__divider,
+.theme--light.v-breadcrumbs .v-breadcrumbs__item--disabled {
+  color: rgba(255,255,255,.38)!important
+}
+.contents h1,
+.contents h2,
+.contents h3,
+.contents h4,
+.contents h5,
+.contents h6 {
+  color: var(--site-white)!important;
+  border: none!important;
+  border-bottom: none!important;
+  position: relative;
+  padding-bottom: .5em;
+  margin-bottom: 1em
+}
+.contents h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--site-orange-500);
+  border-radius: 2px
+}
+.contents h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60%;
+  height: 2px;
+  background-color: var(--site-orange-400);
+  border-radius: 2px
+}
+.contents h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  height: 2px;
+  background-color: var(--site-orange-300);
+  border-radius: 2px
+}
+.contents li,
+.contents p,
+.contents td,
+.contents th {
+  color: var(--site-text)!important
+}
+.page-col-sd .v-card,
+.page-col-sd .v-sheet {
+  background-color: var(--site-navy-700)!important;
+  border: none!important;
+  box-shadow: none!important
+}
+.v-sheet.v-card:not(.v-sheet--outlined) {
+  border: 1px solid var(--site-navy-300)!important;
+  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12)!important
+}
+.page-col-sd .caption,
+.page-col-sd .overline,
+.page-col-sd .v-card__title {
+  color: var(--site-orange-500)!important;
+  font-weight: 700!important
+}
+.page-col-sd .body-1,
+.page-col-sd .body-2,
+.page-col-sd .v-card__text,
+.page-col-sd .v-list-item__title {
+  color: var(--site-text)!important
+}
+.page-col-sd .v-icon {
+  color: var(--site-text)!important
+}
+.contents a,
+.v-application a,
+a {
+  color: var(--site-orange-400)!important;
+  text-decoration: none!important
+}
+.contents a:hover,
+.v-application a:hover,
+a:hover {
+  color: var(--site-orange-300)!important
+}
+.v-application .primary,
+.v-btn.primary,
+.v-btn.v-btn--contained.primary {
+  background-color: var(--site-orange-500)!important;
+  color: var(--site-white)!important;
+  border: none!important
+}
+.v-application .blue.darken-3 {
+  background-color: var(--sidebar-bg)!important
+}
+.v-btn.primary:hover {
+  background-color: var(--site-orange-400)!important
+}
+.v-btn.v-btn--outlined {
+  border-color: var(--site-orange-500)!important;
+  color: var(--site-orange-400)!important
+}
+.v-btn.v-btn--outlined:hover {
+  background-color: var(--site-navy-300)!important
+}
+.v-btn--fab,
+.v-btn.v-btn--fab {
+  background-color: var(--site-orange-500)!important;
+  color: var(--site-white)!important
+}
+.contents code,
+.contents pre,
+code,
+pre {
+  background-color: var(--site-navy-700)!important;
+  color: var(--site-orange-200)!important;
+  border: 1px solid var(--site-navy-100)!important;
+  border-radius: 4px!important
+}
+.contents pre code {
+  border: none!important
+}
+.contents table,
+.v-data-table {
+  background-color: var(--site-navy-400)!important
+}
+.contents table th,
+.v-data-table th {
+  background-color: var(--site-navy-300)!important;
+  color: var(--site-white)!important;
+  border-bottom: 2px solid var(--site-orange-500)!important
+}
+.contents table td,
+.v-data-table td {
+  color: var(--site-text)!important;
+  border-bottom: 1px solid var(--site-navy-100)!important
+}
+.contents table tr:hover td {
+  background-color: var(--site-navy-300)!important
+}
+.contents blockquote {
+  border-left: 4px solid var(--site-orange-500)!important;
+  background-color: var(--site-navy-300)!important;
+  color: var(--site-text)!important;
+  padding: 1em 1.5em!important;
+  margin: 1em 0!important
+}
+.v-application .v-navigation-drawer,
+.v-application .v-navigation-drawer .theme--dark.v-list,
+.v-application .v-navigation-drawer .theme--dark.v-sheet,
+.v-application .v-navigation-drawer__content {
+  background-color: var(--sidebar-bg)!important;
+  border-color: var(--sidebar-bg)!important
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px
+}
+::-webkit-scrollbar-track {
+  background: var(--site-navy-700)
+}
+::-webkit-scrollbar-thumb {
+  background: var(--site-navy-100);
+  border-radius: 4px
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--site-orange-400)
+}
+.editor-markdown,
+.editor-markdown .editor-markdown-main {
+  background-color: var(--site-navy-700)!important
+}
+.CodeMirror,
+.editor-markdown .CodeMirror {
+  background-color: var(--site-navy-700)!important;
+  color: var(--site-text)!important
+}
+.CodeMirror-gutters {
+  background-color: var(--site-navy-400)!important;
+  border-right: 1px solid var(--site-navy-100)!important
+}
+.CodeMirror-linenumber {
+  color: var(--site-navy-100)!important
+}
+.CodeMirror-cursor {
+  border-left-color: var(--site-orange-500)!important
+}
+.CodeMirror-focused .CodeMirror-selected,
+.CodeMirror-selected {
+  background-color: var(--site-navy-300)!important
+}
+.CodeMirror-activeline-background {
+  background-color: hsla(206,50%,20%,.4)!important
+}
+.cm-header {
+  color: var(--site-white)!important
+}
+.cm-link,
+.cm-url {
+  color: var(--site-orange-400)!important
+}
+.cm-strong {
+  color: var(--site-orange-300)!important
+}
+.cm-em {
+  color: var(--site-orange-200)!important
+}
+.cm-keyword {
+  color: var(--site-orange-500)!important
+}
+.cm-atom {
+  color: var(--site-orange-300)!important
+}
+.cm-string {
+  color: var(--site-orange-200)!important
+}
+.cm-comment {
+  color: var(--site-navy-100)!important
+}
+.cm-code,
+.cm-inline-code {
+  background-color: var(--site-navy-400)!important;
+  color: var(--site-orange-200)!important;
+  border-radius: 3px!important
+}
+.ProseMirror,
+.editor-wysiwyg,
+.editor-wysiwyg .ProseMirror,
+.editor-wysiwyg .tiptap {
+  background-color: var(--site-navy-400)!important;
+  color: var(--site-text)!important
+}
+.editor-toolbar,
+.editor-wysiwyg .editor-toolbar,
+.tabset-editor .v-tabs-bar {
+  background-color: var(--site-navy-300)!important;
+  border: none!important;
+  box-shadow: none!important
+}
+.editor-toolbar .v-btn,
+.editor-toolbar .v-icon {
+  color: var(--site-text)!important
+}
+.editor-toolbar .v-btn:hover {
+  background-color: var(--site-navy-100)!important
+}
+.editor-toolbar .v-btn--active,
+.editor-toolbar .v-btn.v-btn--active {
+  background-color: var(--site-orange-500)!important;
+  color: var(--site-white)!important
+}
+.editor-modal,
+.editor-modal-content,
+.editor-props {
+  background-color: var(--site-navy-400)!important;
+  color: var(--site-text)!important
+}
+.editor-markdown .editor-markdown-preview,
+.editor-markdown-preview-content {
+  background-color: var(--site-navy-100)!important;
+  color: var(--site-text)!important;
+  border-left: 1px solid var(--site-navy-300)!important
+}
+.editor-markdown-preview-content h1,
+.editor-markdown-preview-content h2,
+.editor-markdown-preview-content h3 {
+  color: var(--site-white)!important
+}
+.editor-markdown-preview-content a {
+  color: var(--site-orange-400)!important
+}
+.v-tabs .v-tab {
+  color: var(--site-text)!important
+}
+.v-tabs .v-tab--active {
+  color: var(--site-orange-400)!important
+}
+.v-tabs-slider {
+  background-color: var(--site-orange-500)!important
+}
+.v-chip {
+  background-color: var(--site-navy-300)!important;
+  color: var(--site-orange-300)!important;
+  border: none!important
+}
+.v-dialog,
+.v-dialog .v-card {
+  background-color: var(--site-navy-400)!important;
+  color: var(--site-text)!important;
+  border: none!important
+}
+.v-dialog .v-card__title {
+  color: var(--site-white)!important
+}
+.v-input .v-input__slot,
+.v-select .v-input__slot,
+.v-text-field .v-input__slot,
+.v-textarea .v-input__slot {
+  background-color: var(--site-navy-300)!important;
+  border: 1px solid var(--site-navy-100)!important;
+  border-radius: 4px!important;
+  box-shadow: none!important
+}
+.v-input .v-select__selection,
+.v-input input,
+.v-input textarea {
+  color: var(--site-text)!important
+}
+.v-input .v-label {
+  color: var(--site-navy-100)!important
+}
+.v-input .v-input__slot,
+.v-input .v-label {
+  border-color: var(--site-text)!important;
+  color: var(--site-text)!important
+}
+.theme--dark.v-card,
+.theme--dark.v-sheet,
+.v-card,
+.v-expansion-panel,
+.v-sheet {
+  background-color: var(--site-navy-700)!important;
+  color: var(--site-text)!important;
+  border: none!important;
+  box-shadow: none!important
+}
+::selection {
+  background-color: var(--site-orange-500)!important;
+  color: var(--site-white)!important
+}
+.v-divider {
+  border-color: var(--site-navy-100)!important
+}
+.v-tooltip__content {
+  background-color: var(--site-navy-300)!important;
+  color: var(--site-text)!important
+}
+.v-snack__wrapper {
+  background-color: var(--site-navy-300)!important;
+  color: var(--site-text)!important
+}
+.v-application--is-ltr .v-card__actions > .v-btn.v-btn .v-icon--left {
+    color: white !important;
+}
+.v-progress-linear__determinate,
+.v-progress-linear__indeterminate .long,
+.v-progress-linear__indeterminate .short {
+  background-color: var(--site-orange-500)!important
+}
+.v-app-bar .v-toolbar__content,
+.v-toolbar__content,
+.v-toolbar__extension {
+  border: none!important;
+  box-shadow: none!important
+}
+
+.v-application .page-author-card-name.body-2.grey--text.text--darken-3{
+    color: var(--site-text)!important;
+    caret-color: var(--site-text)!important;
+    font-weight: bold;
+}
+.v-avatar .v-icon, .v-avatar .v-image, .v-avatar .v-responsive__content, .v-avatar img, .v-avatar svg {
+    color: var(--site-orange-400) !important;
+}
+.v-list-item .v-list-item__subtitle, .v-list-item .v-list-item__title {
+    color: white;
+}
+.v-app-bar,
+.v-card,
+.v-sheet,
+.v-toolbar {
+  outline: 0!important
+}
+.v-icon.v-icon{
+  color: var(--site-orange-400) !important;
+}
+.v-toolbar__content .v-icon.v-icon{
+  color: var(--site-white) !important;
+}
+.dialog-header{
+  background-color: var(--site-navy-100) !important;
+  background-image: none !important;
+}
+.v-btn__content {
+  color: var(--site-white) !important;
+}
+.v-list-item .v-list-item__subtitle, .v-list-item .v-list-item__title {
+    color: white !important;
+    line-height: 1.2;
+}
+.theme--light.v-list-item .v-list-item__action-text, .theme--light.v-list-item .v-list-item__subtitle {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+.v-menu__content .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled):first-child {
+    background-color: var(--site-navy-100)!important;
+}
+.v-speed-dial .v-btn--outlined .v-btn__content .v-icon, .v-btn--round .v-btn__content .v-icon {
+    color: currentColor;
+    color: white !important;
+}
+.v-app-bar *,
+.v-toolbar *,
+header,
+header * {
+  border-color: transparent!important
+}
+.v-footer {
+  display: none!important
+}
