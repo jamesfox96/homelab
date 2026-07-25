@@ -162,6 +162,9 @@ services:
       TZ: ${TZ}
     devices:
       - /dev/dri:/dev/dri
+    group_add:
+      - ${RENDER_GID}
+      - ${VIDEO_GID}
     volumes:
       - ${APPDATA}/jellyfin:/config
       - ${DATA_ROOT}:/data
