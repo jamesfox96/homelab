@@ -96,6 +96,25 @@ services:
       - 8989:8989
     restart: unless-stopped
 
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    depends_on:
+      - radarr
+      - sonarr
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      UMASK: "022"
+    volumes:
+      - ${APPDATA}/bazarr:/config
+      - ${DATA_ROOT}/media/films:/movies
+      - ${DATA_ROOT}/media/tv:/tv
+    ports:
+      - 6767:6767
+    restart: unless-stopped
+    
   recyclarr:
     image: ghcr.io/recyclarr/recyclarr:latest
     container_name: recyclarr
