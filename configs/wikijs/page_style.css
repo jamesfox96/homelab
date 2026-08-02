@@ -1,0 +1,115 @@
+.contents {
+  line-height: 1.7
+}
+.contents h1 {
+  margin-bottom: 1rem;
+  padding-bottom: .3rem
+}
+.contents h2 {
+  margin-top: 2rem;
+  margin-bottom: .75rem;
+  padding-bottom: .2rem
+}
+.contents h3 {
+  margin-top: 1rem;
+  margin-bottom: .5rem
+}
+.contents p {
+  margin-bottom: 1.2em!important
+}
+.contents ol,
+.contents ul {
+  margin-bottom: 1.5rem;
+  padding-left: 2rem
+}
+.contents li {
+  margin-bottom: .5rem
+}
+.contents strong {
+  color: var(--site-orange-300)
+}
+.contents img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.5em auto 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -1px rgba(0,0,0,.06);
+  border: 1px solid #e2e8f0
+}
+.contents img ~ em {
+  text-align: center;
+  display: block
+}
+.contents a {
+  border-bottom: 1px dashed #3182ce;
+  transition: color .2s ease
+}
+.contents a:hover {
+  border-bottom-style: solid
+}
+.contents blockquote:before {
+  content: none!important
+}
+.wiki-pagination {
+  display: flex!important;
+  justify-content: space-between!important;
+  gap: 16px!important;
+  padding-top: 24px!important;
+  width: 100%!important
+}
+.wiki-pagination .nav-btn {
+  display: flex!important;
+  align-items: center!important;
+  flex: 1!important;
+  padding: 16px 24px!important;
+  text-decoration: none!important;
+  border: 1px solid var(--site-orange-200)!important;
+  border-radius: 12px!important;
+  transition: all .2s ease-in-out!important;
+  background-color: var(--site-orange-300)!important
+}
+.wiki-pagination .nav-btn:hover {
+  border-color: var(--site-orange-400)!important;
+  transform: translateY(-2px)!important;
+  box-shadow: 0 4px 12px rgba(49,130,206,.1)!important
+}
+.wiki-pagination .next-btn {
+  justify-content: flex-end!important;
+  text-align: right!important
+}
+.wiki-pagination .nav-text {
+  display: flex!important;
+  flex-direction: column!important;
+  gap: 4px!important
+}
+.wiki-pagination .label {
+  font-size: .75rem!important;
+  text-transform: uppercase!important;
+  letter-spacing: .05em!important;
+  color: #fff!important
+}
+.wiki-pagination .nav-text em {
+  font-style: normal!important;
+  font-weight: 600!important;
+  font-size: 1rem!important;
+  color: var(--site-navy-400)!important
+}
+.wiki-pagination .arrow {
+  font-size: 1.25rem!important;
+  font-weight: 700!important;
+  color: #fff!important;
+  transition: transform .2s ease!important
+}
+.wiki-pagination .prev-btn .arrow {
+  margin-right: 16px!important
+}
+.wiki-pagination .next-btn .arrow {
+  margin-left: 16px!important
+}
+.wiki-pagination .prev-btn:hover .arrow {
+  transform: translateX(-4px)!important
+}
+.wiki-pagination .next-btn:hover .arrow {
+  transform: translateX(4px)!important
+}
