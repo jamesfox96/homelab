@@ -534,6 +534,9 @@ header,
 header * {
   border-color: transparent!important
 }
+.search-results-items .highlighted {
+  background: #fff linear-gradient(360deg,var(--site-orange-500),var(--site-orange-300))!important
+}
 .v-footer {
   display: none!important
 }
