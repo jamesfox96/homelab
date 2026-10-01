@@ -116,7 +116,7 @@ services:
     restart: unless-stopped
     
   recyclarr:
-    image: ghcr.io/recyclarr/recyclarr:latest
+    image: ghcr.io/recyclarr/recyclarr:8
     container_name: recyclarr
     user: ${PUID}:${PGID}
     environment:
