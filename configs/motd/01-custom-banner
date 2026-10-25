@@ -1,0 +1,280 @@
+#!/usr/bin/env bash
+#
+# roach - custom login banner (replaces Ubuntu default MOTD)
+# Deploy to: /etc/update-motd.d/01-custom-banner
+# Then:      chmod +x /etc/update-motd.d/01-custom-banner
+#            disable the stock scripts - see README
+#
+# Uses only tools available by default on Ubuntu Server.
+#
+# NOTE: pam_motd runs this as root with an empty environment (env -i), once
+# per login, and the user waits for it. Anything slow must be cached or
+# wrapped in `timeout`.
+
+# ---------------------------------------------------------------- colours ----
+# Use $'...' so \e becomes a real ESC character. Plain "\e" would print
+# literally when embedded in a %s value (as seen in the inline percentages).
+RESET=$'\e[0m'
+BOLD=$'\e[1m'
+DIM=$'\e[2m'
+GREEN=$'\e[32m'
+CYAN=$'\e[36m'
+YELLOW=$'\e[33m'
+RED=$'\e[31m'
+MAGENTA=$'\e[35m'
+
+box() { printf "${BOLD}%s${RESET}\n" "$1"; }
+label() { printf "${CYAN}%-14s${RESET}%s\n" "$1" "$2"; }
+ok()   { printf "${GREEN}%-14s${RESET}${GREEN}%s${RESET}\n" "$1" "$2"; }
+warn() { printf "${YELLOW}%-14s${RESET}${YELLOW}%s${RESET}\n" "$1" "$2"; }
+bad()  { printf "${RED}%-14s${RESET}${RED}%s${RESET}\n" "$1" "$2"; }
+
+# ---------------------------------------------------------------- banner ----
+printf "${CYAN}"
+cat <<'EOF'
+  ██████╗  ██████╗  █████╗  ██████╗██╗  ██╗
+  ██╔══██╗██╔═══██╗██╔══██╗██╔════╝██║  ██║
+  ██████╔╝██║   ██║███████║██║     ███████║
+  ██╔══██╗██║   ██║██╔══██║██║     ██╔══██║
+  ██║  ██║╚██████╔╝██║  ██║╚██████╗██║  ██║
+  ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
+EOF
+printf "${RESET}"
+
+# ------------------------------------------------------------ host info ----
+HOSTNAME=$(hostname)
+ARCH=$(uname -m)
+KERNEL=$(uname -r)
+IP=$(hostname -I 2>/dev/null | awk '{print $1}')
+# distro (works on ubuntu via /etc/os-release)
+[ -f /etc/os-release ] && . /etc/os-release
+DISTRO="${PRETTY_NAME:-Linux}"
+UPTIME="$(uptime -p 2>/dev/null | sed 's/up //')"
+
+# The MOTD is generated once by root and shown to every user, so there's no
+# reliable username to greet here ($USER is empty under pam_motd).
+printf "\n${BOLD}Welcome to ${CYAN}%s${RESET}\n" "$HOSTNAME"
+label "OS"        "$DISTRO"
+label "Kernel"    "$KERNEL ($ARCH)"
+label "Address"   "${IP:-unknown}"
+label "Up for"    "${UPTIME:-unknown}"
+echo
+
+# ------------------------------------------------------- system status ----
+box "System status"
+# Load + cores
+read -r LOAD1 LOAD5 LOAD15 _ < /proc/loadavg
+CORES=$(nproc)
+LOADPCT=$(awk -v l="$LOAD1" -v c="$CORES" 'BEGIN{printf "%d", (l/c)*100}')
+if [ "$LOADPCT" -ge 100 ]; then
+    load_line="${RED}$LOADPCT%${RESET}"
+else
+    load_line="${GREEN}$LOADPCT%${RESET}"
+fi
+label "Load"      "${LOAD1} (1m) / ${LOAD5} (5m) / ${LOAD15} (15m)  [${load_line} of $CORES cores]"
+
+# Memory
+read -r MTOTAL MAVAIL _ < <(free -b | awk '/Mem:/{print $2, $7}')
+MTOTAL_GB=$(awk -v m="$MTOTAL" 'BEGIN{printf "%.1f", m/1073741824}')
+MAVAIL_GB=$(awk -v m="$MAVAIL" 'BEGIN{printf "%.1f", m/1073741824}')
+MEM=$(awk -v t="$MTOTAL" -v a="$MAVAIL" 'BEGIN{printf "%.0f", ((t-a)/t)*100}')
+if [ "$MEM" -ge 85 ]; then mem_colour=$RED; elif [ "$MEM" -ge 60 ]; then mem_colour=$YELLOW; else mem_colour=$GREEN; fi
+label "Memory"    "${MAVAIL_GB}G free / ${MTOTAL_GB}G  [${mem_colour}${MEM}% used${RESET}]"
+
+# Temperature (if exposed)
+TEMP=$(awk '{printf "%.0f", $1/1000}' /sys/class/thermal/thermal_zone0/temp 2>/dev/null)
+if [ -n "$TEMP" ]; then
+    if [ "$TEMP" -ge 80 ]; then tcol=$RED; elif [ "$TEMP" -ge 65 ]; then tcol=$YELLOW; else tcol=$GREEN; fi
+    label "Temp"   "${tcol}${TEMP}°C${RESET}"
+fi
+echo
+
+# ---------------------------------------------------------------- disks ----
+# Every real filesystem (pseudo/boot filesystems filtered out). `timeout`
+# guards against a stale network mount hanging df.
+# Add mounts that MUST be present (e.g. a media drive) to EXPECTED_MOUNTS;
+# they're shown in red if missing, so a dropped drive is obvious at login.
+EXPECTED_MOUNTS=(/mnt/storage)
+
+box "Disks"
+declare -A mounted
+while read -r target avail size pcent; do
+    mounted[$target]=1
+    used=${pcent%\%}
+    [[ "$used" =~ ^[0-9]+$ ]] || used=0
+    if [ "$used" -ge 90 ]; then dcol=$RED; elif [ "$used" -ge 80 ]; then dcol=$YELLOW; else dcol=$GREEN; fi
+    label "$target" "${avail} free / ${size}  [${dcol}${pcent} used${RESET}]"
+done < <(timeout 2 df -h --output=target,avail,size,pcent \
+             -x tmpfs -x devtmpfs -x ramfs -x overlay -x squashfs -x efivarfs -x vfat 2>/dev/null \
+         | awk 'NR>1 && $1 !~ /^\/(boot|snap|run|sys|dev)(\/|$)/')
+for m in "${EXPECTED_MOUNTS[@]}"; do
+    [ -n "${mounted[$m]}" ] || bad "$m" "✗ NOT MOUNTED"
+done
+echo
+
+# ------------------------------------------------------ service status ----
+# Mediaserver + the whole *arr stack + download clients (only shown if present).
+# Two systemctl calls in total, loaded into associative arrays, so there are
+# no per-unit D-Bus round trips.
+services=(jellyfin plexmediaserver emby-server \
+          radarr sonarr lidarr readarr prowlarr bazarr \
+          qbittorrent-nox transmission-daemon deluged sabnzbd \
+          nginx caddy docker pihole-FTL wg-quick@wg0)
+pretty=(Jellyfin Plex Emby \
+        Radarr Sonarr Lidarr Readarr Prowlarr Bazarr \
+        qBittorrent Transmission Deluge SABnzbd \
+        nginx caddy Docker Pi-hole WireGuard)
+
+declare -A unit_active unit_sub unit_enabled
+# list-units columns: UNIT LOAD ACTIVE SUB DESCRIPTION
+while read -r unit _ active sub _; do
+    unit_active[$unit]=$active
+    unit_sub[$unit]=$sub
+done < <(timeout 2 systemctl list-units --type=service --all --no-legend --plain 2>/dev/null)
+# list-unit-files columns: UNIT STATE [PRESET]
+while read -r unit state _; do
+    unit_enabled[$unit]=$state
+done < <(timeout 2 systemctl list-unit-files --type=service --no-legend --plain 2>/dev/null)
+
+box "Services"
+found=0
+for i in "${!services[@]}"; do
+    unit="${services[$i]}.service"
+    # Skip unless the unit is actually installed / loaded.
+    [ -n "${unit_active[$unit]}${unit_enabled[$unit]}" ] || continue
+    found=1
+    name="${pretty[$i]}"
+    enabled="${unit_enabled[$unit]:-unknown}"
+    case "${unit_active[$unit]}" in
+        active)
+            if [ "${unit_sub[$unit]}" = "running" ]; then
+                ok "$name" "● running (${enabled})"
+            else
+                ok "$name" "● active/${unit_sub[$unit]} (${enabled})"
+            fi;;
+        failed)   bad  "$name" "✗ failed (${enabled})";;
+        activating|deactivating|reloading)
+                  warn "$name" "◌ ${unit_active[$unit]} (${enabled})";;
+        *)        bad  "$name" "○ stopped (${enabled})";;
+    esac
+done
+[ "$found" -eq 0 ] && label "" "no known services found"
+echo
+
+# ---------------------------------------------------- docker containers ----
+# One `docker ps` call, capped by `timeout` so a wedged daemon can't hang login.
+if command -v docker >/dev/null 2>&1 && [ -S /var/run/docker.sock ]; then
+    box "Containers"
+    containers="$(timeout 2 docker ps -a --format '{{.Names}}\t{{.State}}\t{{.Status}}' 2>/dev/null)"
+    rc=$?
+    if [ "$rc" -eq 124 ]; then
+        warn "docker" "daemon not responding (timed out)"
+    elif [ "$rc" -ne 0 ]; then
+        bad "docker" "unable to query daemon"
+    elif [ -z "$containers" ]; then
+        label "" "no containers"
+    else
+        # Pad names to the longest one so the status column lines up.
+        width=$(awk -F'\t' '{ if (length($1) > w) w = length($1) } END { print (w < 13 ? 14 : w + 2) }' <<<"$containers")
+        # Restarts done by Docker's restart policy (i.e. crashes). Manual
+        # `docker restart` doesn't count; recreating the container resets it.
+        declare -A restarts
+        while read -r rname rcount; do
+            restarts[$rname]=$rcount
+        done < <(cut -f1 <<<"$containers" \
+                 | xargs timeout 2 docker inspect --format '{{.Name}} {{.RestartCount}}' 2>/dev/null \
+                 | sed 's|^/||')
+        while IFS=$'\t' read -r cname cstate cstatus; do
+            case "$cstate" in
+                running)
+                    case "$cstatus" in
+                        *unhealthy*)        col=$RED;    sym="✗";;
+                        *"health: starting"*) col=$YELLOW; sym="◌";;
+                        *)                  col=$GREEN;  sym="●";;
+                    esac;;
+                restarting|paused|created|removing) col=$YELLOW; sym="◌";;
+                *)                          col=$RED;    sym="○";;
+            esac
+            extra=""
+            rc_n=${restarts[$cname]:-0}
+            [ "$rc_n" -gt 0 ] && extra="  ${YELLOW}↻ ${rc_n} restart(s)${RESET}"
+            printf "${col}%-${width}s%s %s${RESET}%s\n" "$cname" "$sym" "$cstatus" "$extra"
+        done < <(sort <<<"$containers")
+    fi
+    echo
+fi
+
+# -------------------------------------------------------------- updates ----
+# apt-check takes a few seconds (it loads the whole apt cache), so never run
+# it inline. Show the last cached result and refresh the cache in the
+# background - fully detached - when apt/dpkg state is newer than the cache.
+box "Updates"
+if [ -f /var/run/reboot-required ]; then
+    bad "Reboot" "a reboot is required to apply updates"
+fi
+
+APT_CHECK=/usr/lib/update-notifier/apt-check
+APT_CACHE_DIR=/var/cache/roach-motd
+APT_CACHE=$APT_CACHE_DIR/apt-check
+
+if [ -x "$APT_CHECK" ]; then
+    stale=0
+    if [ ! -f "$APT_CACHE" ] \
+       || [ /var/lib/dpkg/status -nt "$APT_CACHE" ] \
+       || [ -n "$(find /var/lib/apt/lists -maxdepth 1 -newer "$APT_CACHE" -print -quit 2>/dev/null)" ] \
+       || [ -n "$(find "$APT_CACHE" -mmin +720 2>/dev/null)" ]; then
+        stale=1
+    fi
+    if [ "$stale" -eq 1 ] && mkdir -p "$APT_CACHE_DIR" 2>/dev/null && [ -w "$APT_CACHE_DIR" ]; then
+        # apt-check prints "updates;security" on STDERR. flock stops parallel
+        # logins from piling up refreshes; setsid + closed fds mean pam_motd
+        # doesn't wait for it.
+        setsid flock -n "$APT_CACHE.lock" \
+            sh -c "'$APT_CHECK' 2>'$APT_CACHE.tmp' >/dev/null && mv '$APT_CACHE.tmp' '$APT_CACHE'" \
+            </dev/null >"$APT_CACHE_DIR/refresh.log" 2>&1 &
+    fi
+
+    # stderr may also carry warnings, so pick out the "N;M" line wherever it is.
+    counts="$(grep -Eo '^[0-9]+;[0-9]+' "$APT_CACHE" 2>/dev/null | tail -n1)"
+    if [[ "$counts" =~ ^([0-9]+)\;([0-9]+)$ ]]; then
+        updatable=${BASH_REMATCH[1]}
+        security=${BASH_REMATCH[2]}
+        if [ "$security" -gt 0 ]; then
+            bad  "Security" "${security} security update(s) required"
+        fi
+        if [ "$updatable" -gt 0 ]; then
+            warn "apt" "${updatable} update(s) available (${security} security)"
+            printf "${DIM}    run: sudo apt update && sudo apt upgrade${RESET}\n"
+        else
+            ok "apt" "system is up to date"
+        fi
+        [ "$stale" -eq 1 ] && printf "${DIM}    (refreshing in background)${RESET}\n"
+    else
+        label "apt" "checking for updates... (shown on next login)"
+    fi
+else
+    label "apt" "run 'apt list --upgradable' to check"
+fi
+echo
+
+# ------------------------------------------------------ recent logins ----
+box "Recent logins"
+# Ubuntu 26.04 uses wtmpdb rather than the old wtmp file, and `last` may not
+# be installed. Try wtmpdb, then `last`, then the journal. OpenSSH 9.8+ logs
+# auth from `sshd-session`, not `sshd`, so match both.
+logins="$(timeout 1 wtmpdb last -n 10 2>/dev/null || timeout 1 last -a -n 10 2>/dev/null)"
+logins="$(grep -vE '^(reboot|wtmp|wtmpdb|$)' <<<"$logins" | head -n 5)"
+if [ -z "$logins" ]; then
+    logins="$(timeout 1 journalctl _COMM=sshd-session _COMM=sshd -n 500 --no-pager -o short 2>/dev/null \
+        | grep 'Accepted' \
+        | sed -E 's/^([A-Za-z]+ +[0-9]+ [0-9:]+).*Accepted [a-z-]+ for ([^ ]+) from ([^ ]+).*/\1  \2  from \3/' \
+        | tail -n 5 | tac)"
+fi
+if [ -n "$logins" ]; then
+    printf '%s\n' "$logins" | sed 's/^/  /'
+else
+    printf "${DIM}  no recent logins recorded${RESET}\n"
+fi
+echo
+
+printf "${DIM}— run 'systemctl status' or 'htop' for live detail —${RESET}\n"
