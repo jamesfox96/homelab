@@ -5,29 +5,37 @@
 ################################################################################
 
 sonarr:
-  main:
-    base_url: http://sonarr:8989  # May need host IP
+  sonarr:
+    base_url: !secret sonarr_url
     api_key: !secret sonarr_apikey
 
     quality_definition:
       type: series
 
     quality_profiles:
-      - trash_id: 86b36e3e57147f1d1b37b6c59d747d25  # WEB-2160p
+      - trash_id: d1498e7d189fbe6c7110ceaabb7473e6  # WEB-2160p
         reset_unmatched_scores:
           enabled: true
       - trash_id: 72dae194fc92bf828f32cde7744e51a1  # WEB-1080p
         reset_unmatched_scores:
           enabled: true
+      - trash_id: 9d142234e45d6143785ac55f5a9e8dc9  # WEB-1080p (Alternative) - Bluray/HDTV fallback for older shows
+        reset_unmatched_scores:
+          enabled: true
+
+    # Guide only applies these groups to WEB-2160p
+    custom_format_groups:
+      add:
+        - trash_id: e0b2774083df4265f25c9e5bc6c80940  # [HDR Formats] DV Boost
+        - trash_id: d776a1ea912a117d66d83b880ff2055d  # [HDR Formats] DV (w/o HDR fallback)
 
 ################################################################################
 ## RADARR
 ################################################################################
 
 radarr:
-  # First instance/profile configuration block
-  uhd-bluray-web:
-    base_url: http://radarr:7878  # May need host IP 
+  radarr:
+    base_url: !secret radarr_url
     api_key: !secret radarr_apikey
 
     quality_definition:
@@ -37,11 +45,19 @@ radarr:
       - trash_id: 64fb5f9858489bdac2af690e27c8f42f  # UHD Bluray + WEB
         reset_unmatched_scores:
           enabled: true
+      - trash_id: d1d67249d3890e49bc12e275d989a7e9  # HD Bluray + WEB
+        reset_unmatched_scores:
+          enabled: true
 
+    # Groups only score profiles on their guide include list:
+    # DV groups -> UHD only, Movie Versions + Language -> UHD and HD
     custom_format_groups:
       add:
         - trash_id: 1616617ab3a14397a2b2321bcbda44d1  # [HDR Formats] DV Boost
         - trash_id: 7fc2751eef7e6bdc70b74136e5e35c76  # [HDR Formats] DV (w/o HDR fallback)
+        - trash_id: 13856622cf7a6c9925d3a83f8812d679  # [Optional] Language Profiles
+          select:
+            - d6e9318c875905d6cfb5bee961afcea9  # Language: Not Original
         - trash_id: f4f1474b963b24cf983455743aa9906c  # [Optional] Movie Versions
           select:
             - eca37840c13c6ef2dd0262b141a5482f  # 4K Remaster
@@ -49,17 +65,3 @@ radarr:
             - 9f6cbff8cfe4ebbc1bde14c7b7bec0de  # IMAX Enhanced
             - 0f12c086e289cf966fa5948eac571f44  # Hybrid
             - 570bc9ebecd92723d2d21500f4be314c  # Remaster
-
-  # Second instance/profile configuration block mapping to the same base URL
-  hd-bluray-web:
-    base_url: http://192.168.0.200:7878
-    api_key: !secret radarr_apikey
-
-    quality_definition:
-      type: movie
-
-    quality_profiles:
-      - trash_id: d1d67249d3890e49bc12e275d989a7e9  # HD Bluray + WEB
-        reset_unmatched_scores:
-          enabled: true
-

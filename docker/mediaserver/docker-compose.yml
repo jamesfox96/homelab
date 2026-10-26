@@ -123,6 +123,7 @@ services:
       TZ: ${TZ}
     volumes:
       - ${APPDATA}/recyclarr:/config
+      - ../../configs/recyclarr/recyclarr.yml:/config/recyclarr.yml:ro
     restart: unless-stopped
 
   prowlarr:
@@ -179,6 +180,7 @@ services:
       PUID: ${PUID}
       PGID: ${PGID}
       TZ: ${TZ}
+      DOCKER_MODS: linuxserver/mods:jellyfin-opencl-intel  # OpenCL runtime for HW tone mapping
     devices:
       - /dev/dri:/dev/dri
     group_add:
