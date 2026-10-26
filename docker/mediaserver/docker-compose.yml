@@ -171,6 +171,9 @@ services:
       timeout: 3s
       interval: 15s
       retries: 3
+    networks:
+      - default
+      - tunnel
     restart: unless-stopped
 
   jellyfin:
@@ -193,3 +196,6 @@ services:
       - 8096:8096
     restart: unless-stopped
 
+networks:
+  tunnel:
+    external: true

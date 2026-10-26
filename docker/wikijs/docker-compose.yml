@@ -34,12 +34,11 @@ services:
       - ${APPDATA}/wikijs/data:/wiki/data
     ports:
        - 3000:3000
+    networks:
+      - default
+      - tunnel
     restart: unless-stopped
 
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    container_name: cloudflared
-    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
-    environment:
-      - TZ=${TZ}
-    restart: unless-stopped
+networks:
+  tunnel:
+    external: true
