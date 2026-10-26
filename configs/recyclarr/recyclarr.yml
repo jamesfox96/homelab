@@ -65,3 +65,22 @@ radarr:
             - 9f6cbff8cfe4ebbc1bde14c7b7bec0de  # IMAX Enhanced
             - 0f12c086e289cf966fa5948eac571f44  # Hybrid
             - 570bc9ebecd92723d2d21500f4be314c  # Remaster
+        # HD only: block x265 SDR re-encodes but allow x265 HDR/DV
+        - trash_id: f8bf8eab4617f12dfdbd16303d8da245  # [Optional] Golden Rule HD
+          select:
+            - 839bea857ed2c0a8e084f3cbdbd65ecb  # x265 (no HDR/DV)
+          exclude:
+            - dc98083864ea246d05a42df0d05f81cc  # x265 (HD)
+
+    # Prefer HDR/DV at 1080p. HDR outscores HD tier bonuses (1600-1800)
+    custom_formats:
+      - trash_ids:
+          - 493b6d1dbec3c3364c59d7607f7e3405  # HDR
+        assign_scores_to:
+          - name: HD Bluray + WEB
+            score: 2000
+      - trash_ids:
+          - b337d6812e06c200ec9a2d3cfa9d20a7  # DV Boost
+          - 923b6abef9b17f937fab56cfcf89e1f1  # DV (w/o HDR fallback)
+        assign_scores_to:
+          - name: HD Bluray + WEB
