@@ -1,0 +1,23 @@
+- resources:
+    label: System
+    cpu: true
+    memory: true
+    disk: /
+    cputemp: true
+    uptime: true
+
+- resources:
+    label: Media
+    disk: /storage
+
+- search:
+    provider: google
+    focus: true
+    target: _blank
+
+- datetime:
+    text_size: md
+    format:
+      dateStyle: medium
+      timeStyle: short
+

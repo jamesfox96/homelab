@@ -1,0 +1,168 @@
+# Links use the LAN address; widgets are fetched server-side by the homepage container,
+# so they keep working when viewing the dashboard through the tunnel.
+# Status dots come from the docker socket proxy (server: roach, see docker.yaml).
+- Media:
+    - Jellyfin:
+        icon: moonfin.png
+        href: http://{{HOMEPAGE_VAR_HOST}}:8096
+        server: roach
+        container: jellyfin
+        widget:
+          type: jellyfin
+          version: 2   # header auth; Jellyfin 10.12+ rejects the legacy api_key method
+          url: http://{{HOMEPAGE_VAR_HOST}}:8096
+          key: "{{HOMEPAGE_VAR_JELLYFIN_KEY}}"
+          enableBlocks: true
+          fields: ["movies", "series", "episodes"]
+          enableNowPlaying: true
+    - Seerr:
+        icon: seerr.png
+        href: https://seerr.james-fox.com
+        server: roach
+        container: seerr
+        widget:
+          type: seerr
+          url: http://{{HOMEPAGE_VAR_HOST}}:5055
+          key: "{{HOMEPAGE_VAR_SEERR_KEY}}"
+    - Bazarr:
+        icon: bazarr.png
+        href: http://{{HOMEPAGE_VAR_HOST}}:6767
+        server: roach
+        container: bazarr
+        widget:
+          type: bazarr
+          url: http://{{HOMEPAGE_VAR_HOST}}:6767
+          key: "{{HOMEPAGE_VAR_BAZARR_KEY}}"
+
+- Downloads:
+    - Radarr:
+        icon: radarr.png
+        href: http://{{HOMEPAGE_VAR_HOST}}:7878
+        server: roach
+        container: radarr
+        widget:
+          type: radarr
+          url: http://{{HOMEPAGE_VAR_HOST}}:7878
+          key: "{{HOMEPAGE_VAR_RADARR_KEY}}"
+    - Sonarr:
+        icon: sonarr.png
+        href: http://{{HOMEPAGE_VAR_HOST}}:8989
+        server: roach
+        container: sonarr
+        widget:
+          type: sonarr
+          url: http://{{HOMEPAGE_VAR_HOST}}:8989
+          key: "{{HOMEPAGE_VAR_SONARR_KEY}}"
+    - Prowlarr:
+        icon: prowlarr.png
+        href: http://{{HOMEPAGE_VAR_HOST}}:9696
+        server: roach
+        container: prowlarr
+        widget:
+          type: prowlarr
+          url: http://{{HOMEPAGE_VAR_HOST}}:9696
+          key: "{{HOMEPAGE_VAR_PROWLARR_KEY}}"
+    - qBittorrent:
+        icon: qbittorrent.png
+        href: http://{{HOMEPAGE_VAR_HOST}}:8080
+        server: roach
+        container: qbittorrent
+        widget:
+          type: qbittorrent
+          url: http://{{HOMEPAGE_VAR_HOST}}:8080
+          username: "{{HOMEPAGE_VAR_QBIT_USER}}"
+          password: "{{HOMEPAGE_VAR_QBIT_PASS}}"
+
+- Upcoming:
+    - Calendar:
+        widget:
+          type: calendar
+          view: agenda
+          maxEvents: 10
+          showTime: true
+          firstDayInWeek: monday
+          integrations:
+            - type: radarr
+              service_group: Downloads
+              service_name: Radarr
+            - type: sonarr
+              service_group: Downloads
+              service_name: Sonarr
+
+- Network:
+    - Gluetun:
+        icon: gluetun.png
+        description: VPN for qBittorrent & Prowlarr
+        server: roach
+        container: gluetun
+        widget:
+          type: gluetun
+          url: http://{{HOMEPAGE_VAR_HOST}}:8000
+          key: "{{HOMEPAGE_VAR_GLUETUN_KEY}}"
+          fields: ["public_ip", "country", "port_forwarded"]
+    - Cloudflared:
+        icon: cloudflare-zero-trust.png
+        href: https://one.dash.cloudflare.com
+        server: roach
+        container: cloudflared
+        widget:
+          type: cloudflared
+          accountid: "{{HOMEPAGE_VAR_CF_ACCOUNT_ID}}"
+          tunnelid: "{{HOMEPAGE_VAR_CF_TUNNEL_ID}}"
+          key: "{{HOMEPAGE_VAR_CF_API_TOKEN}}"
+    - Pi-hole:
+        icon: pi-hole.png
+        href: http://{{HOMEPAGE_VAR_HOST}}:8081/admin
+        server: roach
+        container: pihole
+        widget:
+          type: pihole
+          url: http://{{HOMEPAGE_VAR_HOST}}:8081
+          version: 6
+          key: "{{HOMEPAGE_VAR_PIHOLE_KEY}}"
+
+- Apps:
+    - Wiki.js:
+        icon: wikijs.png
+        href: https://wiki.james-fox.com
+        description: Homelab docs
+        server: roach
+        container: wikijs
+    - Wiki.js DB:
+        icon: postgres.png
+        description: Postgres for Wiki.js
+        server: roach
+        container: wikijs-db
+    - Recyclarr:
+        icon: recyclarr.png
+        description: TRaSH profile sync
+        server: roach
+        container: recyclarr
+    - FlareSolverr:
+        icon: flaresolverr.png
+        description: Cloudflare challenge solver
+        server: roach
+        container: flaresolverr
+
+- Links:
+    - Wiki:
+        icon: wikijs.png
+        href: https://wiki.james-fox.com
+        description: wiki.james-fox.com
+    - GitHub Homelab:
+        icon: si-github
+        href: https://github.com/jamesfox96/homelab
+        description: homelab repo
+    - GitHub Wiki:
+        icon: si-github
+        href: https://github.com/jamesfox96/homelab/wiki
+        description: wiki repo
+    - Cloudflare Zero Trust:
+        icon: cloudflare.png
+        href: https://one.dash.cloudflare.com
+        description: Tunnels & Access
+    - Google:
+        icon: google.png
+        href: https://google.com
+        description: it's google...
+

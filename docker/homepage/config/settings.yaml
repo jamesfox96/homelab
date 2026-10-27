@@ -1,0 +1,24 @@
+title: Homelab
+theme: dark
+color: slate
+headerStyle: clean
+statusStyle: dot
+useEqualHeights: true
+
+# Media and Downloads span the full width; the rest sit side by side as columns.
+layout:
+  Media:
+    style: row
+    columns: 3
+  Downloads:
+    style: row
+    columns: 4
+  Upcoming:
+    header: true
+  Network:
+    header: true
+  Apps:
+    header: true
+  Links:
+    header: true
+
